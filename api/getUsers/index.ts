@@ -1,20 +1,10 @@
-import { OrderCreateArgs, Roles, Status } from '@prisma/client';
-
 import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
 import { Response } from '../../common/class/response';
-import { Stripe } from 'stripe';
-
-const sendmail = require('sendmail')();
 
 export class GetUsers extends BaseConnector implements BaseContract {
-  private stripe: Stripe;
-
   constructor(req, res) {
     super(req, res);
-    this.stripe = new Stripe(process.env.SECRET_KEY_STRIPE, {
-      apiVersion: '2020-03-02'
-    });
 
     this.start();
   }

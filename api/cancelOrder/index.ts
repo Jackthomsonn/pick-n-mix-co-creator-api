@@ -1,5 +1,6 @@
 import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
+import { Response } from './../../common/class/response/index';
 
 export class CancelOrder extends BaseConnector implements BaseContract {
   constructor(req, res) {
@@ -9,9 +10,9 @@ export class CancelOrder extends BaseConnector implements BaseContract {
   }
 
   async start(): Promise<void> {
-    this.res.status(200).send({
+    this.res.json(new Response().success({
       cancelled: true
-    });
+    }));
   }
 }
 

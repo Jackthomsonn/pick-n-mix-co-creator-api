@@ -1,20 +1,21 @@
+import { AllowedMethod } from './../../interfaces/allowed-method';
 import { Response } from './../response/index';
-import { Roles, User, raw } from '@prisma/client';
+import { Roles, User } from '@prisma/client';
 
 import { BaseConnector } from './../base/index';
 import { verify } from 'jsonwebtoken';
-import Stripe from 'stripe';
+import { Stripe } from 'stripe';
 
 export class Guard {
-  private stripe: Stripe;
-
   private webhookSecrets = {
     'product.deleted': process.env.PRODUCT_DELETED_WEBHOOK_SECRET,
     'product.created': process.env.PRODUCT_CREATED_WEBHOOK_SECRET,
     'product.updated': process.env.PRODUCT_UPDATED_WEBHOOK_SECRET,
   }
 
-  constructor(private delegate: BaseConnector, private roles?: Roles[]) {
+  private stripe: Stripe;
+
+  constructor(private delegate: BaseConnector, private allowedMethods: AllowedMethod[], private roles?: Roles[]) {
     this.stripe = new Stripe(process.env.SECRET_KEY_STRIPE, {
       apiVersion: '2020-03-02'
     });
@@ -86,8 +87,18 @@ export class Guard {
     }
   }
 
+  async isMethodAllowed() {
+    if (this.allowedMethods.includes(<any>this.delegate.req.method)) {
+      return Promise.resolve();
+    }
+
+    throw Error('Method not allowed');
+  }
+
   async performChecks() {
     try {
+      await this.isMethodAllowed();
+
       if (!this.delegate.req.headers.authorization) {
         if (!this.delegate.req.headers[ 'stripe-signature' ]) {
           throw Error('You must be an authorised client to perform this request');

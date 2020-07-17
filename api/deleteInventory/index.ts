@@ -1,18 +1,13 @@
+import { AllowedMethod } from '../../common/interfaces/allowed-method';
 import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
 import { Guard } from '../../common/class/guard/index';
 import { Response } from '../../common/class/response';
 import { Roles } from '@prisma/client';
-import Stripe from 'stripe';
 
 export class DeleteInventory extends BaseConnector implements BaseContract {
-  private stripe: Stripe;
-
   constructor(req, res) {
     super(req, res);
-    this.stripe = new Stripe(process.env.SECRET_KEY_STRIPE, {
-      apiVersion: '2020-03-02'
-    });
   }
 
   async start(): Promise<void> {
@@ -26,4 +21,4 @@ export class DeleteInventory extends BaseConnector implements BaseContract {
   }
 }
 
-export default ((req, res) => new Guard(new DeleteInventory(req, res), [ Roles.ADMIN ]))
+export default ((req, res) => new Guard(new DeleteInventory(req, res), [ AllowedMethod.DELETE ], [ Roles.ADMIN ]))

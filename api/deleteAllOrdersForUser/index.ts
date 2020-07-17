@@ -1,3 +1,4 @@
+import { AllowedMethod } from '../../common/interfaces/allowed-method';
 import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
 import { Guard } from '../../common/class/guard/index';
@@ -12,7 +13,7 @@ export class DeleteOrdersForUser extends BaseConnector implements BaseContract {
 
   async start(): Promise<void> {
     try {
-      const user = await this.prisma.order.deleteMany();
+      const user = await this.prisma.order.deleteMany({});
 
       this.res.json(new Response().success(user));
     } catch (e) {
@@ -21,4 +22,4 @@ export class DeleteOrdersForUser extends BaseConnector implements BaseContract {
   }
 }
 
-export default ((req, res) => new Guard(new DeleteOrdersForUser(req, res), [ Roles.ADMIN ]))
+export default ((req, res) => new Guard(new DeleteOrdersForUser(req, res), [ AllowedMethod.DELETE ], [ Roles.ADMIN ]))

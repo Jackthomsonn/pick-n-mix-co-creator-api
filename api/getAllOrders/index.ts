@@ -1,3 +1,4 @@
+import { AllowedMethod } from '../../common/interfaces/allowed-method';
 import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
 import { EmailService } from './../../common/class/base/email/index';
@@ -63,4 +64,4 @@ export class GetAllOrders extends BaseConnector implements BaseContract {
   }
 }
 
-export default ((req, res) => new Guard(new GetAllOrders(req, res), [ Roles.ADMIN ]))
+export default ((req, res) => new Guard(new GetAllOrders(req, res), [ AllowedMethod.GET ], [ Roles.ADMIN ]))

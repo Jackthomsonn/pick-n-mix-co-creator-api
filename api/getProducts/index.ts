@@ -1,8 +1,7 @@
-import { OrderCreateArgs, ProductArgs } from '@prisma/client';
-
 import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
-import { Guard } from '../../common/class/guard/index';
+import { EmailService } from './../../common/class/base/email/index';
+import { ProductArgs } from '@prisma/client';
 import { Response } from '../../common/class/response';
 
 export class GetProducts extends BaseConnector implements BaseContract {
@@ -14,9 +13,11 @@ export class GetProducts extends BaseConnector implements BaseContract {
 
   async start(): Promise<void> {
     try {
-      const body: ProductArgs = this.req.body;
-
-      const data = await this.prisma.product.findMany();
+      const data = await this.prisma.product.findMany({
+        orderBy: {
+          weight: 'asc'
+        }
+      });
 
       this.res.json(new Response().success(data));
     } catch (e) {

@@ -1,3 +1,4 @@
+import { AllowedMethod } from '../../common/interfaces/allowed-method';
 import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
 import { Guard } from '../../common/class/guard/index';
@@ -62,4 +63,4 @@ export class GetOrdersForUser extends BaseConnector implements BaseContract {
   }
 }
 
-export default ((req, res) => new Guard(new GetOrdersForUser(req, res)))
+export default ((req, res) => new Guard(new GetOrdersForUser(req, res), [ AllowedMethod.GET ]))

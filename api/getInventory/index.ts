@@ -1,8 +1,6 @@
-import { OrderCreateArgs, ProductArgs } from '@prisma/client';
-
 import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
-import { Guard } from '../../common/class/guard/index';
+import { ProductArgs } from '@prisma/client';
 import { Response } from '../../common/class/response';
 
 export class GetInventory extends BaseConnector implements BaseContract {
@@ -14,9 +12,11 @@ export class GetInventory extends BaseConnector implements BaseContract {
 
   async start(): Promise<void> {
     try {
-      const body: ProductArgs = this.req.body;
-
-      const data = await this.prisma.inventory.findMany();
+      const data = await this.prisma.inventory.findMany({
+        orderBy: {
+          name: 'asc'
+        }
+      });
 
       this.res.json(new Response().success(data));
     } catch (e) {

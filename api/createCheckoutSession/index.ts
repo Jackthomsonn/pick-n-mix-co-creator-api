@@ -1,23 +1,24 @@
 import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
-import { Guard } from '../../common/class/guard/index';
 import { Response } from '../../common/class/response';
-import Stripe from 'stripe';
 
 export class CreateCheckoutSession extends BaseConnector implements BaseContract {
-  private stripe: Stripe;
 
   constructor(req, res) {
     super(req, res);
-
-    this.stripe = new Stripe(process.env.SECRET_KEY_STRIPE, {
-      apiVersion: '2020-03-02'
-    });
 
     this.start();
   }
 
   async start(): Promise<void> {
+    let host;
+
+    if (this.req.headers[ 'x-forwarded-host' ]) {
+      host = `http://${ this.req.headers[ 'x-forwarded-host' ] }`;
+    } else {
+      host = `https://${ this.req.headers.host }`;
+    }
+
     try {
       const checkoutSession = await this.stripe.checkout.sessions.create({
         billing_address_collection: 'auto',
@@ -34,8 +35,8 @@ export class CreateCheckoutSession extends BaseConnector implements BaseContract
           }
         } ],
         mode: 'payment',
-        success_url: `http://7f3f9bb84efb.ngrok.io/api/startOrder`,
-        cancel_url: 'http://7f3f9bb84efb.ngrok.io/api/cancelOrder'
+        success_url: `${ host }/api/startOrder`,
+        cancel_url: `${ host }/api/cancelOrder`
       })
 
       this.res.json(new Response().success(checkoutSession.id));
