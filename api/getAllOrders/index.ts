@@ -1,10 +1,9 @@
 import { AllowedMethod } from '../../common/interfaces/allowed-method';
 import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
-import { EmailService } from './../../common/class/base/email/index';
 import { Guard } from '../../common/class/guard/index';
 import { Response } from '../../common/class/response';
-import { Roles } from '@prisma/client';
+import { Role } from '@prisma/client';
 
 export class GetAllOrders extends BaseConnector implements BaseContract {
   constructor(req, res) {
@@ -16,42 +15,28 @@ export class GetAllOrders extends BaseConnector implements BaseContract {
       const orders = await this.prisma.order.findMany({
         select: {
           createdDate: true,
-          status: true,
-          user: {
+          lineItems: {
             select: {
-              email: true,
-              order: {
+              product: {
                 select: {
-                  addressDetails: {
+                  price: true
+                }
+              },
+              productOptions: {
+                select: {
+                  inventoryItem: {
                     select: {
-                      line1: true,
-                      line2: true,
-                      city: true,
-                      country: true,
-                      postal_code: true
-                    }
-                  },
-                  lineItems: {
-                    select: {
-                      product: {
-                        select: {
-                          name: true,
-                          price: true
-                        }
-                      },
-                      productOptions: {
-                        select: {
-                          inventoryItem: {
-                            select: {
-                              name: true
-                            }
-                          }
-                        }
-                      }
+                      name: true
                     }
                   }
                 }
               }
+            }
+          },
+          status: true,
+          user: {
+            select: {
+              email: true
             }
           }
         }
@@ -64,4 +49,4 @@ export class GetAllOrders extends BaseConnector implements BaseContract {
   }
 }
 
-export default ((req, res) => new Guard(new GetAllOrders(req, res), [ AllowedMethod.GET ], [ Roles.ADMIN ]))
+export default ((req, res) => new Guard(new GetAllOrders(req, res), [ AllowedMethod.GET ], [ Role.ADMIN ]))

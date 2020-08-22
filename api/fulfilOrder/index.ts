@@ -1,19 +1,17 @@
-import { EmailService } from './../../common/class/email/index';
-import { Status, User, Role } from '@prisma/client';
+import { Role, Status, User } from '@prisma/client';
 
-import { BaseConnector } from './../../common/class/base/index';
-import { BaseContract } from './../../common/interfaces/base-contract';
+import { AllowedMethod } from './../../common/interfaces/allowed-method';
+import { BaseConnector } from '../../common/class/base/index';
+import { BaseContract } from '../../common/interfaces/base-contract';
+import { EmailService } from '../../common/class/email/index';
+import { Guard } from './../../common/class/guard/index';
 import { Response } from '../../common/class/response';
 import { Stripe } from 'stripe';
 
-export class CreateOrder extends BaseConnector implements BaseContract {
+export class FulfilOrder extends BaseConnector implements BaseContract {
   constructor(req, res) {
     super(req, res);
-
-    this.start();
   }
-
-  private readonly STRIPE_ADDRESS_REFERENCE = 'stripe_address_reference';
 
   async start(): Promise<void> {
     if (this.req.method === 'OPTIONS') {
@@ -21,48 +19,26 @@ export class CreateOrder extends BaseConnector implements BaseContract {
     }
 
     try {
-      const stripeAddressReference = this.req.headers[ this.STRIPE_ADDRESS_REFERENCE ] ? this.req.headers[ this.STRIPE_ADDRESS_REFERENCE ] : this.req.query[ this.STRIPE_ADDRESS_REFERENCE ];
-
-      const session = await this.stripe.checkout.sessions.retrieve(<string>stripeAddressReference, {
-        expand: [ 'line_items' ]
-      });
-
-      const stripeCustomer: any = await this.stripe.customers.retrieve(session.customer.toString());
-
-      const user = await this.prisma.user.findOne({
+      const order = await this.prisma.order.update({
         where: {
-          email: stripeCustomer.email
+          id: this.req.body.data.orderId
+        },
+        data: {
+          status: Status.FULFILLED
         }
       });
 
-      this.createOrConnectUser(user, stripeCustomer);
-
-      this.setAddressDetails(session);
-      this.setStatus();
-
-      const itemsToBeUpdated = [];
-      this.req.body.data.lineItems.create.forEach(c => {
-        c.productOptions.create.forEach(a => {
-          itemsToBeUpdated.push(a.inventoryItem.connect.id);
-        });
+      const user = await this.prisma.user.findOne({
+        where: {
+          id: order.userId
+        }
       });
-
-      const orderExists = await this.prisma.order.findOne({ where: { stripeAddressReference: <string>stripeAddressReference } });
-
-      if (orderExists) {
-        this.res.status(401).json(new Response().fail('This order has already been created', e.message));
-      }
-
-      const data = await this.prisma.order.create(this.req.body);
-
-      await this.updateInventoryQuantity(itemsToBeUpdated);
 
       await this.sendEmail({
-        email: user ? user.email : stripeCustomer.email,
-        session: session
+        email: user.email
       });
 
-      this.res.json(new Response().success(data));
+      this.res.json(new Response().success(order));
     } catch (e) {
       this.res.status(500).json(new Response().fail('There was an error when trying to process your request', e.message));
     }
@@ -123,9 +99,9 @@ export class CreateOrder extends BaseConnector implements BaseContract {
     return Promise.all(promises);
   }
 
-  async sendEmail(options: { email: string, session: Stripe.Checkout.Session }) {
-    return await EmailService.sendPurchasedEmail(options);
+  async sendEmail(options: { email: string }) {
+    return await EmailService.sendFulfilledOrderStatus(options);
   }
 }
 
-export default ((req, res) => new CreateOrder(req, res))
+export default ((req, res) => new Guard(new FulfilOrder(req, res), [ AllowedMethod.POST ], [ Role.ADMIN ]));

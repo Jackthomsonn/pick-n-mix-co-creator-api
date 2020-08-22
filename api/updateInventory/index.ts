@@ -1,4 +1,4 @@
-import { InventoryCreateArgs, Roles } from '@prisma/client';
+import { InventoryCreateArgs, Role } from '@prisma/client';
 
 import { AllowedMethod } from './../../common/interfaces/allowed-method';
 import { BaseConnector } from '../../common/class/base/index';
@@ -24,4 +24,4 @@ export class UpdateInventory extends BaseConnector implements BaseContract {
   }
 }
 
-export default ((req, res) => new Guard(new UpdateInventory(req, res), [ AllowedMethod.PUT ], [ Roles.ADMIN ]))
+export default ((req, res) => new Guard(new UpdateInventory(req, res), [ AllowedMethod.PUT ], [ Role.ADMIN ]))

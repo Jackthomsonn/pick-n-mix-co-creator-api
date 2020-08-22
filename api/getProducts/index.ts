@@ -1,7 +1,5 @@
 import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
-import { EmailService } from './../../common/class/base/email/index';
-import { ProductArgs } from '@prisma/client';
 import { Response } from '../../common/class/response';
 
 export class GetProducts extends BaseConnector implements BaseContract {

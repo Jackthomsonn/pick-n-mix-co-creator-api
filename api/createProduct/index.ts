@@ -3,7 +3,7 @@ import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
 import { Guard } from './../../common/class/guard/index';
 import { Response } from '../../common/class/response';
-import { Roles } from '@prisma/client';
+import { Role } from '@prisma/client';
 
 export class CreateProduct extends BaseConnector implements BaseContract {
   constructor(req, res) {
@@ -32,4 +32,4 @@ export class CreateProduct extends BaseConnector implements BaseContract {
   }
 }
 
-export default ((req, res) => new Guard(new CreateProduct(req, res), [ AllowedMethod.POST ], [ Roles.ADMIN ]))
+export default ((req, res) => new Guard(new CreateProduct(req, res), [ AllowedMethod.POST ], [ Role.ADMIN ]))

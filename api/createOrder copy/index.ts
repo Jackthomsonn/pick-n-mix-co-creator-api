@@ -1,8 +1,8 @@
-import { EmailService } from './../../common/class/email/index';
+import { EmailService } from '../../common/class/email/index';
 import { Status, User, Role } from '@prisma/client';
 
-import { BaseConnector } from './../../common/class/base/index';
-import { BaseContract } from './../../common/interfaces/base-contract';
+import { BaseConnector } from '../../common/class/base/index';
+import { BaseContract } from '../../common/interfaces/base-contract';
 import { Response } from '../../common/class/response';
 import { Stripe } from 'stripe';
 

@@ -1,18 +1,21 @@
-import { AllowedMethod } from './../../common/interfaces/allowed-method';
 import { BaseConnector } from '../../common/class/base/index';
 import { BaseContract } from '../../common/interfaces/base-contract';
-import { Guard } from './../../common/class/guard/index';
 import { Response } from '../../common/class/response';
-import { Role } from '@prisma/client';
 
-export class DeleteProduct extends BaseConnector implements BaseContract {
+export class GetProduct extends BaseConnector implements BaseContract {
   constructor(req, res) {
     super(req, res);
+
+    this.start();
   }
 
   async start(): Promise<void> {
     try {
-      const data = await this.prisma.product.delete({ where: { stripeProductReference: this.req.body.data.object.id } });
+      const data = await this.prisma.product.findOne({
+        where: {
+          id: parseInt(this.req.query.productId[ 0 ])
+        }
+      });
 
       this.res.json(new Response().success(data));
     } catch (e) {
@@ -21,4 +24,4 @@ export class DeleteProduct extends BaseConnector implements BaseContract {
   }
 }
 
-export default ((req, res) => new Guard(new DeleteProduct(req, res), [ AllowedMethod.DELETE ], [ Role.ADMIN ]))
+export default ((req, res) => new GetProduct(req, res))

@@ -13,10 +13,25 @@ export class CreateCheckoutSession extends BaseConnector implements BaseContract
   async start(): Promise<void> {
     let host;
 
+    if (this.req.method === 'OPTIONS') {
+      return this.res.status(200).end();
+    }
+
     if (this.req.headers[ 'x-forwarded-host' ]) {
       host = `http://${ this.req.headers[ 'x-forwarded-host' ] }`;
     } else {
       host = `https://${ this.req.headers.host }`;
+    }
+
+    let successUrl = '';
+    let cancelUrl = '';
+
+    if (this.req.query.web) {
+      successUrl = 'http://localhost:4200/create-order';
+      cancelUrl = 'http://localhost:4200/cart';
+    } else {
+      successUrl = `${ host }/api/startOrder`;
+      cancelUrl = `${ host }/api/cancelOrder`;
     }
 
     try {
@@ -26,17 +41,10 @@ export class CreateCheckoutSession extends BaseConnector implements BaseContract
           allowed_countries: [ 'GB' ],
         },
         payment_method_types: [ 'card' ],
-        line_items: [ {
-          quantity: 1,
-          price_data: {
-            product: this.req.query.productId.toString(),
-            currency: 'gbp',
-            unit_amount: <any>this.req.query.productPrice
-          }
-        } ],
+        line_items: this.req.body,
         mode: 'payment',
-        success_url: `${ host }/api/startOrder`,
-        cancel_url: `${ host }/api/cancelOrder`
+        success_url: successUrl,
+        cancel_url: cancelUrl
       })
 
       this.res.json(new Response().success(checkoutSession.id));

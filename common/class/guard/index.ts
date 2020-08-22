@@ -1,6 +1,6 @@
 import { AllowedMethod } from './../../interfaces/allowed-method';
 import { Response } from './../response/index';
-import { Roles, User } from '@prisma/client';
+import { User } from '@prisma/client';
 
 import { BaseConnector } from './../base/index';
 import { verify } from 'jsonwebtoken';
