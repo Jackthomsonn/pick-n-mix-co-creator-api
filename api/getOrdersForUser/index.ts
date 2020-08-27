@@ -18,6 +18,7 @@ export class GetOrdersForUser extends BaseConnector implements BaseContract {
         select: {
           order: {
             select: {
+              id: true,
               createdDate: true,
               updatedDate: true,
               status: true,
@@ -49,8 +50,7 @@ export class GetOrdersForUser extends BaseConnector implements BaseContract {
                     }
                   }
                 }
-              },
-              shareable: true
+              }
             }
           }
         }

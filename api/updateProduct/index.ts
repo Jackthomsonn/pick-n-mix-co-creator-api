@@ -20,6 +20,7 @@ export class UpdateProduct extends BaseConnector implements BaseContract {
         data: {
           price: productPrice.data[ 0 ].unit_amount,
           name: product.name,
+          image: product.images[ 0 ],
           stripeProductReference: product.id,
           weight: parseInt(product.metadata.weight),
           amountOfSweets: parseInt(product.metadata.amountOfSweets)

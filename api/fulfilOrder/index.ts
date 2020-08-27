@@ -19,9 +19,19 @@ export class FulfilOrder extends BaseConnector implements BaseContract {
     }
 
     try {
-      const order = await this.prisma.order.update({
+      const order = await this.prisma.order.findOne({
         where: {
           id: this.req.body.data.orderId
+        }
+      });
+
+      if (order.status === Status.FULFILLED) {
+        this.res.status(401).json(new Response().fail('This order has already been fullfilled', undefined));
+      }
+
+      const updatedOrder = await this.prisma.order.update({
+        where: {
+          id: order.id
         },
         data: {
           status: Status.FULFILLED
@@ -38,7 +48,7 @@ export class FulfilOrder extends BaseConnector implements BaseContract {
         email: user.email
       });
 
-      this.res.json(new Response().success(order));
+      this.res.json(new Response().success(updatedOrder));
     } catch (e) {
       this.res.status(500).json(new Response().fail('There was an error when trying to process your request', e.message));
     }

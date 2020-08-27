@@ -11,28 +11,12 @@ export class CreateCheckoutSession extends BaseConnector implements BaseContract
   }
 
   async start(): Promise<void> {
-    let host;
-
     if (this.req.method === 'OPTIONS') {
       return this.res.status(200).end();
     }
 
-    if (this.req.headers[ 'x-forwarded-host' ]) {
-      host = `http://${ this.req.headers[ 'x-forwarded-host' ] }`;
-    } else {
-      host = `https://${ this.req.headers.host }`;
-    }
-
-    let successUrl = '';
-    let cancelUrl = '';
-
-    if (this.req.query.web) {
-      successUrl = 'http://localhost:4200/create-order';
-      cancelUrl = 'http://localhost:4200/cart';
-    } else {
-      successUrl = `${ host }/api/startOrder`;
-      cancelUrl = `${ host }/api/cancelOrder`;
-    }
+    const successUrl = `${ process.env.APP_URL }/create-order`;
+    const cancelUrl = `${ process.env.APP_URL }/cart`;
 
     try {
       const checkoutSession = await this.stripe.checkout.sessions.create({

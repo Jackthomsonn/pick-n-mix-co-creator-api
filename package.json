@@ -9,16 +9,16 @@
   "author": "Jack Thomson <hello@jackthomson.co.uk> (http://www.jackthomson.co.uk)",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^2.2.2",
-    "@vercel/node": "^1.7.2",
+    "@prisma/client": "^2.5.1",
+    "@vercel/node": "^1.7.4",
     "jsonwebtoken": "^8.5.1",
     "mjml": "^4.6.3",
-    "nodemailer": "^6.4.10"
+    "nodemailer": "^6.4.11"
   },
   "devDependencies": {
-    "@prisma/cli": "^2.2.2",
+    "@prisma/cli": "^2.5.1",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/stripe": "^7.13.24",
-    "stripe": "^8.76.0"
+    "stripe": "^8.89.0"
   }
 }

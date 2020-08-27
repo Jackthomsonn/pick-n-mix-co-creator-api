@@ -38,20 +38,33 @@ export class CreateOrder extends BaseConnector implements BaseContract {
       this.createOrConnectUser(user, stripeCustomer);
 
       this.setAddressDetails(session);
+
       this.setStatus();
 
       const itemsToBeUpdated = [];
-      this.req.body.data.lineItems.create.forEach(c => {
-        c.productOptions.create.forEach(a => {
-          itemsToBeUpdated.push(a.inventoryItem.connect.id);
+
+      this.req.body.data.lineItems.create.forEach(lineItem => {
+        lineItem.productOptions.create.forEach(productOption => {
+          itemsToBeUpdated.push(productOption.inventoryItem.connect.id);
         });
       });
 
-      const orderExists = await this.prisma.order.findOne({ where: { stripeAddressReference: <string>stripeAddressReference } });
+      const orderDoesExist = await this.prisma.order.findOne({
+        where: {
+          stripeAddressReference: <string>stripeAddressReference
+        }
+      });
 
-      if (orderExists) {
-        this.res.status(401).json(new Response().fail('This order has already been created', e.message));
+      if (orderDoesExist) {
+        this.res.status(500).json(new Response().fail(
+          'This order has already been created',
+          'This order has already been created',
+        ));
+
+        return;
       }
+
+      this.req.body.data.stripeAddressReference = stripeAddressReference;
 
       const data = await this.prisma.order.create(this.req.body);
 
@@ -64,7 +77,10 @@ export class CreateOrder extends BaseConnector implements BaseContract {
 
       this.res.json(new Response().success(data));
     } catch (e) {
-      this.res.status(500).json(new Response().fail('There was an error when trying to process your request', e.message));
+      this.res.status(500).json(new Response().fail(
+        'There was an error when trying to process your request',
+        e.message
+      ));
     }
   }
 

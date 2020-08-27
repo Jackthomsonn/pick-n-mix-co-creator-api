@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 generator client {
@@ -37,7 +37,7 @@ model AddressDetails {
 
 model Order {
   id                     Int            @default(autoincrement()) @id
-  stripeAddressReference String         @unique
+  stripeAddressReference String         @default("") @unique
   status                 Status
   createdDate            DateTime       @default(now())
   updatedDate            DateTime?
@@ -69,7 +69,6 @@ model Product {
   id                     Int        @default(autoincrement()) @id
   name                   String
   price                  Int
-  image                  String
   weight                 Int
   amountOfSweets         Int
   lineItem               LineItem[]

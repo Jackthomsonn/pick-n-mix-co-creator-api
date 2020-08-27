@@ -12,11 +12,18 @@ export class DeleteProduct extends BaseConnector implements BaseContract {
 
   async start(): Promise<void> {
     try {
-      const data = await this.prisma.product.delete({ where: { stripeProductReference: this.req.body.data.object.id } });
+      const data = await this.prisma.product.delete({
+        where: {
+          stripeProductReference: this.req.body.data.object.id
+        }
+      });
 
       this.res.json(new Response().success(data));
     } catch (e) {
-      this.res.status(500).json(new Response().fail('There was an error when trying to process your request', e.message));
+      this.res.status(500).json(new Response().fail(
+        'There was an error when trying to process your request',
+        e.message
+      ));
     }
   }
 }
