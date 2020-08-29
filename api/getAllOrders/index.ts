@@ -14,6 +14,7 @@ export class GetAllOrders extends BaseConnector implements BaseContract {
     try {
       const orders = await this.prisma.order.findMany({
         select: {
+          id: true,
           createdDate: true,
           lineItems: {
             select: {

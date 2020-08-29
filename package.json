@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "postinstall": "npx prisma generate"
+    "postinstall": "npx prisma generate",
+    "migrate": "npx prisma migrate save --name init --experimental && npx prisma migrate up --experimental && npm run generate",
+    "generate": "npx prisma generate"
   },
   "author": "Jack Thomson <hello@jackthomson.co.uk> (http://www.jackthomson.co.uk)",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^2.5.1",
     "@vercel/node": "^1.7.4",
+    "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1",
     "mjml": "^4.6.3",
     "nodemailer": "^6.4.11"

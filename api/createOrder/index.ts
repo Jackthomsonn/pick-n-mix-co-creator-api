@@ -77,6 +77,7 @@ export class CreateOrder extends BaseConnector implements BaseContract {
 
       this.res.json(new Response().success(data));
     } catch (e) {
+      console.log(e);
       this.res.status(500).json(new Response().fail(
         'There was an error when trying to process your request',
         e.message

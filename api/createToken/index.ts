@@ -14,7 +14,7 @@ export class CancelOrder extends BaseConnector implements BaseContract {
     const token = sign({
       email: "hello@jackthomson.co.uk",
       roles: [ "ADMIN" ]
-    }, process.env.SECRET);
+    }, process.env.TOKEN_SECRET);
     this.res.json(new Response().success({ token }));
   }
 }

@@ -1,6 +1,6 @@
 import { AllowedMethod } from './../../interfaces/allowed-method';
 import { Response } from './../response/index';
-import { User } from '@prisma/client';
+import { User, Role } from '@prisma/client';
 
 import { BaseConnector } from './../base/index';
 import { verify } from 'jsonwebtoken';
@@ -15,9 +15,9 @@ export class Guard {
 
   private stripe: Stripe;
 
-  constructor(private delegate: BaseConnector, private allowedMethods: AllowedMethod[], private roles?: Roles[]) {
+  constructor(private delegate: BaseConnector, private allowedMethods: AllowedMethod[], private roles?: Role[]) {
     this.stripe = new Stripe(process.env.SECRET_KEY_STRIPE, {
-      apiVersion: '2020-03-02'
+      apiVersion: null
     });
 
     this.performChecks();
@@ -25,7 +25,7 @@ export class Guard {
 
   isTokenValid() {
     try {
-      verify(this.delegate.req.headers.authorization, process.env.SECRET);
+      verify(this.delegate.req.headers.authorization, process.env.TOKEN_SECRET);
 
       return Promise.resolve();
     } catch (e) {
@@ -63,7 +63,7 @@ export class Guard {
         return Promise.resolve();
       }
 
-      const decodedToken = <User>verify(this.delegate.req.headers.authorization, process.env.SECRET);
+      const decodedToken = <User>verify(this.delegate.req.headers.authorization, process.env.TOKEN_SECRET);
 
       const allRolesMatched = this.roles.every(role => {
         if (!decodedToken.roles || !decodedToken.roles.length) {
