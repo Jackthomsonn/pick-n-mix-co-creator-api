@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 generator client {
@@ -73,7 +73,6 @@ model Product {
   weight                 Int
   amountOfSweets         Int
   lineItem               LineItem[]
-  active                 Boolean    @default(true)
   stripeProductReference String     @unique
 }
 
@@ -87,5 +86,5 @@ model Inventory {
 
 model MarketingEmail {
   id    Int    @default(autoincrement()) @id
-  email String @unique
+  email String
 }

@@ -23,7 +23,8 @@ export class UpdateProduct extends BaseConnector implements BaseContract {
           image: product.images[ 0 ],
           stripeProductReference: product.id,
           weight: parseInt(product.metadata.weight),
-          amountOfSweets: parseInt(product.metadata.amountOfSweets)
+          amountOfSweets: parseInt(product.metadata.amountOfSweets),
+          active: product.active
         }
       });
 

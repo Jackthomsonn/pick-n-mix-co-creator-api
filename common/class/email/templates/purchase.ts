@@ -23,10 +23,18 @@ export const purchaseTemplate = (options: { email: string, session: Stripe.Check
       <mj-section>
         <mj-group>
           <mj-column>
-            <mj-text font-size="16px" color="#555" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">${ options.session.line_items.data[ 0 ].description }</mj-text>
+            ${
+    options.session.line_items.data.map(lineItem => {
+      return `<mj-text font-size="16px" color="#555" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">${ lineItem.description }</mj-text>`;
+    })
+    }
           </mj-column>
           <mj-column>
-            <mj-text font-size="16px" color="#555" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">£${ (options.session.line_items.data[ 0 ].amount_total / 100).toFixed(2) }</mj-text>
+          ${
+    options.session.line_items.data.map(lineItem => {
+      return `<mj-text font-size="16px" color="#555" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">£${ (lineItem.amount_total / 100).toFixed(2) }</mj-text>`;
+    })
+    }
           </mj-column>
         </mj-group>
       </mj-section>
