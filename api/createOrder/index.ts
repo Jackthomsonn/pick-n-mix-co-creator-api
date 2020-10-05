@@ -82,6 +82,8 @@ export class CreateOrder extends BaseConnector implements BaseContract {
         'There was an error when trying to process your request',
         e.message
       ));
+    } finally {
+      await this.prisma.$disconnect();
     }
   }
 
@@ -122,22 +124,22 @@ export class CreateOrder extends BaseConnector implements BaseContract {
   }
 
   async updateInventoryQuantity(inventoryItems: number[]) {
-    const promises = [];
-
     for (let i = 0; i < inventoryItems.length; i++) {
       const inventory = await this.prisma.inventory.findOne({ where: { id: inventoryItems[ i ] } });
 
-      promises.push(this.prisma.inventory.update({
+      await this.prisma.inventory.update({
         where: {
           id: inventoryItems[ i ]
         },
         data: {
-          quantity: inventory.quantity === 1 ? 0 : inventory.quantity - 1
+          quantity: inventory.quantity === 1 ? 0 : inventory.quantity -= 1
         }
-      }));
-    }
+      });
 
-    return Promise.all(promises);
+      if (i === inventoryItems.length - 1) {
+        return Promise.resolve();
+      }
+    }
   }
 
   async sendEmail(options: { email: string, session: Stripe.Checkout.Session }) {

@@ -16,6 +16,8 @@ export class GetUsers extends BaseConnector implements BaseContract {
       this.res.json(new Response().success(users));
     } catch (e) {
       this.res.status(500).json(new Response().fail('There was an error when trying to process your request', e.message));
+    } finally {
+      await this.prisma.$disconnect();
     }
   }
 }

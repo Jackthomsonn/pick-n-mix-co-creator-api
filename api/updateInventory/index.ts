@@ -15,11 +15,21 @@ export class UpdateInventory extends BaseConnector implements BaseContract {
     try {
       const { data }: InventoryCreateArgs = this.req.body;
 
-      await this.prisma.inventory.update({ where: { id: this.req.body.data.id }, data: this.req.body.data });
+      const { name, image, quantity } = data;
+
+      await this.prisma.inventory.update({
+        where: { id: this.req.body.data.id }, data: {
+          name,
+          image,
+          quantity
+        }
+      });
 
       this.res.json(new Response().success(data));
     } catch (e) {
       this.res.status(500).json(new Response().fail('There was an error when trying to process your request', e.message));
+    } finally {
+      await this.prisma.$disconnect();
     }
   }
 }

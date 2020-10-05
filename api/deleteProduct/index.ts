@@ -24,6 +24,8 @@ export class DeleteProduct extends BaseConnector implements BaseContract {
         'There was an error when trying to process your request',
         e.message
       ));
+    } finally {
+      await this.prisma.$disconnect();
     }
   }
 }
