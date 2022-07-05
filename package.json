@@ -16,7 +16,7 @@
     "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1",
     "mjml": "^4.6.3",
-    "nodemailer": "^6.4.11"
+    "nodemailer": "^6.6.1"
   },
   "devDependencies": {
     "@prisma/cli": "^2.5.1",
